@@ -1,19 +1,65 @@
 ---
-title: Setting Up Isaac Sim and ROS2 with Docker on Ubuntu 22.04
-date: 2025-12-25 06:00:00 +0900
-categories: [Robotics, Environment Setup]
+title: Integration of the costom robot arm (FRcobot robotic arm) with the 2F-85 end-effector (2/2)
+date: 2025-12-25 23:00:00 +0900
+categories: [Robotics, Isaac sim]
 tags: [docker, ubuntu, isaac-sim, ros2, simulation]
 media_subpath: /assets/img/2025-12-25/
-image: a_1.png
+image: a_3.png
 toc: true
 comments: true
 pin: true
 math: false
 mermaid: true
 ---
-## Introdution
+<hr>
+- [previous post]( /posts/Integration_of_the_(FRcobot_robotic_arm)_with_the_2F_85_end_effector1/ )
 
-- The purpose of setting up an Ubuntu 22.04 Isaac Sim and ROS 2 environment using Docker on Ubuntu 24.04 is to make it easy to move the entire development environment as a container when you need to work on another computer
+<br>
+
+## Step 5: URDF Rendering in Isaac Sim
+
+- First, let's launch Isaac Sim
+
+```bash
+cd /isaac-sim
+./runapp.sh
+```
+![picture18](28.png)
+_Initial screen_
+
+- File - Import
+
+- choose 
+
+``` /workspace/robot_ws/src/frcobot_ros2/fairino_description/urdf/fairino_with_robotiq.urdf ```
+
+![picture19](29.png)
+_Configure it like this_
+
+**then, import**
+
+<br>
+
+and ```create - physics - ground plane```
+
+![picture20](30.png)
+
+<br>
+<hr>
+
+## Step 6: Isaac-sim Environment Setting
+
+
+
+
+
+
+
+
+
+
+
+
 
 <br>
 <hr>
