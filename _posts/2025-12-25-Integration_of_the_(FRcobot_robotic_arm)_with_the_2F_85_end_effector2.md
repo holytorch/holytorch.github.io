@@ -47,236 +47,223 @@ and ```create - physics - ground plane```
 <br>
 <hr>
 
-## Step 6: Isaac-sim Environment Setting
+## Step 6: Isaac-sim Action Graph
 
+- Let’s start by creating the Action Graph first ```create - graphs - action graph```
 
+<br>
 
+- **ros2 context**
 
+- **on playback tick**
 
+- **isaac read simulation time**
 
+- **ros2 subscribe joint state**
 
+- **ros2 publish joint state**
 
+- **ros2 publish clock**
 
+- **articulation controller**
 
+As shown in the image below, load seven items and connect them with lines
 
+![picture21](31.png)
 
+<br>
+
+Once all the lines are connected, click ```ROS2 Subscribe Joint State```
+
+![picture22](32.png)
+
+Change the topic name to ```isaac_joint_commands```. This is the same name that was configured in ```fairino5_with_robotiq_ros2_control.xacro```
+
+<br>
+
+![picture23](33.png)
+
+Similarly, click ```ROS2 Publish Joint State```, change the topic name to ```isaac_joint_states```, and set the target prim to ```root_joint```
+
+<br>
+
+![picture24](34.png)
+
+Click the ```Articulation Controller``` and change only the target prim to ```root_joint```
 
 <br>
 <hr>
 
-## Prerequisites
+## Step 7: Intermediate operation test
 
-**Host OS**
-- Linux Ubuntu amd64
-
-**Hardware**
-- NVIDIA GPU with RTX support
-- Minimum 8 GB GPU memory recommended (16 GB+ preferred)
-- At least 32 GB system RAM recommended
-
-**GPU Driver**
-- NVIDIA driver (version compatible with Isaac Sim 4.5)
-- `nvidia-smi` must work correctly on the host
-
-**Docker**
-- Docker Engine
-
-**NVIDIA Container Toolkit**
-- `nvidia-container-toolkit` installed and configured
+- Since we’ve gone through so many steps, I’ll first test whether the robot actually works
 
 <br>
-<hr>
 
-## Installation Overview
-```mermaid
-graph TD
-    A[Install Docker Engine] --> B[Install NVIDIA Container Toolkit]
-    B --> C[Pull & Run Isaac Sim Docker Image]
-    C --> D[Install ROS2 Inside Container]
-```
-
----
-
-## Step 1: Install Docker Engine
-Follow the official Docker installation guide:
-
-[Docker Engine Installation for Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
-> **Warning**: Do NOT install Docker Desktop. Use Docker Engine only for compatibility with NVIDIA Container Toolkit.
-{: .prompt-warning }
-<br>
-<hr>
-
-
-
-## Step 2: Install NVIDIA Container Toolkit
-Follow the official NVIDIA Container Toolkit installation guide:
-
-[NVIDIA Container Toolkit Installation Guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
-
-**wait!**
-
-![Follow configuration1](2.png)
-_Follow this part and .._
-
-![Follow configuration2](3.png)
-_Follow this part_
-
-<br>
-- You don’t need to do the rest
-- This part is optional for rootless mode. I don’t think I installed it.
-With this, the Docker setup is essentially finished
-
-<br>
-<hr>
-
-
-
-## Step 3: Pull & Run Isaac Sim Docker Image
-
-Follow the official Isaac Sim container installation guide:
-
-[Isaac Sim Container Installation](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/installation/install_container.html)
-
-Anyway, step by step,
-![Isaac Sim Container Installation2](3.png)
-_stop!_
-
-- This part will come up. The important thing is this:
-You should NOT create the Docker image as a container like this (it’s not that it’s impossible, but it’s inconvenient and not recommended — I went through some trial and error).
-From here on, just follow my steps.
-Do NOT run the command above.
-Instead, create a folder called isaac_ws under your home (~) directory on your local machine
-
-<br>
-```bash
-xhost +local:
-sudo docker run --name isaac-sim \
---entrypoint bash -it \
---runtime=nvidia --gpus all \
--e "ACCEPT_EULA=Y" \
--e "PRIVACY_CONSENT=Y" \
---network=host \
--v ~/isaac_ws:/workspace:rw \
--v ~/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw \
--v ~/docker/isaac-sim/cache/ov:/root/.cache/ov:rw \
--v ~/docker/isaac-sim/cache/pip:/root/.cache/pip:rw \
--v ~/docker/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw \
--v ~/docker/isaac-sim/cache/computecache:/root/.nv/ComputeCache:rw \
--v ~/docker/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw \
--v ~/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
--v ~/docker/isaac-sim/documents:/root/Documents:rw \
--v $HOME/.Xauthority:/isaac-sim/.Xauthority \
--e DISPLAY \
-nvcr.io/nvidia/isaac-sim:4.5.0
-```
-Run it like this
-
-- The part below:
-```
--v $HOME/.Xauthority:/isaac-sim/.Xauthority \
--e DISPLAY \
-```
-is what allows the Docker container to forward the display to your local machine, so you can see and run the GUI locally.
-xhost +local: does the same thing.
-
-- Also, you should remove --rm.
-Since it resets the container when it exits, it’s not something you want here.
-
-- -v ~/isaac_ws:/workspace:rw \ means that your local folder is shared with the Docker container.
-
-- Inside the container, the /workspace directory is mapped to your local ~/isaac_ws folder.
-
-- Anyway, if you run it like this, …
-
-![Isaac Sim Container Installation3](5.png)
-_If you see something like this, it means everything is working correctly. At this point, you’re logged into the Docker container as root, which is the administrator account_
-
-![Isaac Sim Container Installation4](6.png)
-
-- It should look like this, and when you run ```./runapp.sh```, Isaac Sim should launch correctly on your local machine
-
-![Isaac Sim Container Installation5](7.png)
-
-- However, when you run it for the first time, it will look like this. Just wait patiently for about 10 minutes, and it will start running
-
-- Once you’ve confirmed that it runs correctly, stop it and go back to the Docker container’s terminal. Run nvidia-smi there—if CUDA information is displayed, it means the NVIDIA Container Toolkit is installed correctly.
-
-<br>
-<hr>
-## Step 4: Install ROS2 Inside Container
-
-If you’ve made it this far, we’re now ready to install ROS 2,
-
-Actually,
-
-![Isaac Sim Container Installation6](8.png)
-
-- You may see a banner here suggesting that you install ROS in a separate, dedicated Docker container. Ignore this. It recommends creating another container specifically for ROS, but that would mean managing two containers. Communication between containers can become quite complex.
-
-- Instead, we’ll install ROS directly inside the container we’ve already created
-
-Go to this link:
-
-[Install ros2 deb pakage](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html)
-
-- However, it will probably not work smoothly the first time.
-You’ll likely see some errors during the installation
-
-- When that happens, select and copy everything from the terminal output and ask ChatGPT about it
-
-- It will usually tell you which additional packages to install and then to reinstall ROS 2
+First, we need two Docker container bash sessions. Since one terminal running Isaac Sim is already open, open a new terminal tab and run ```sudo docker exec -it isaac-sim bash```
 
 and then,
 
 ```bash
-xhost +local:
-sudo docker start -ai isaac-sim
+cd /workspace/robot_ws
+colcon build
+source install/setup.bash
+ros2 launch robot_ws demo.launch.py
 ```
-```bash
-source /opt/ros/humble/setup.bash
-ros2 run demo_nodes_cpp talker
-```
-_first terminal_
+
+![picture25](35.png)
 
 <br>
 
-```bash
-sudo docker exec -it isaac-sim bash
+Now press the Play button in Isaac Sim, then in RViz move the arm and gripper and click ```Plan and Execute```
+
+![picture26](36.png)
+_isaac sim_
+
+![picture27](37.png)
+_rviz2_
+
+RViz2 moves as expected, but in Isaac Sim the gripper behaves a bit strangely. We’ll fix this in the next step
+
+<br>
+<hr>
+
+## Step 8: Gripper joint configuration
+
+- Since we’ve gone through so many steps, I’ll first test whether the robot actually works
+
+<br>
+
+There’s very little reference material for the Robotiq URDF, so I struggled a bit here
+
+<br>
+
+- I completed the gripper configuration by referring to [Rig Closed-Loop Structures](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/robot_setup/rig_closed_loop_structures.html) 
+
+- The key point is that the gripper should follow a tree structure rather than a closed-loop structure
+
+<br>
+
+For now, I’ll modify ```robotiq_85_left_inner_knuckle_joint``` As shown in the image below, in the Property → Physics panel, set the joint to a revolute joint with limits of −180 to 180, and set the mimic joint’s reference joint path to /World/fairino5_with_robotiq/joints/robotiq_85_left_knuckle_joint
+
+![picture28](38.png)
+
+<br>
+
+Do the same for ```robotiq_85_left_finger_tip_joint```, ```robotiq_85_right_inner_knuckle_joint```, ```robotiq_85_right_knuckle_joint```, and ```robotiq_85_right_finger_tip_joint```: set the limits to −180 to 180 and set the mimic joint to ```/World/fairino5_with_robotiq/joints/robotiq_85_left_knuckle_joint```
+
+> **Warning**: Do not modify ```robotiq_85_left_knuckle_joint```.
+{: .prompt-warning }
+
+<br>
+
+**Now it looks like everything is done, but there’s still a problem**
+
+![picture29](39.png)
+
+**The red-highlighted part doesn’t have a joint defined, so when the gripper grabs an object, the joint tends to separate or spread apart**
+
+<br>
+
+So I decided to create the joint manually. As shown in the image below, ```Ctrl-click``` to select ```robotiq_85_left_inner_knuckle_joint``` and ```robotiq_85_left_finger_tip_joint```, then create a revolute joint
+
+![picture00](00.png)
+
+<br>
+
+Then click the revolute joint and align its axis to match the joint as shown in the image below by dragging it(You only need to adjust the X and Y axes)
+
+![picture01](01.png)
+
+<br>
+
+Then set the revolute joint axis to Y and enter the limits as −180 to 180 and rename the joint to RevoluteJoint1
+
+![picture02](02.png)
+
+<br>
+
+# **Do the same on the right side as you did on the left, and rename it to RevoluteJoint2**
+
+<br>
+
+- press the Play button in Isaac Sim once to test it
+
+![picture03](03.png)
+
+- You’ll see an error like the one shown. This happens because the joints form a loop. Isaac Sim expects the joint configuration to follow a tree structure, not a closed loop [Rig Closed-Loop Structures](https://docs.isaacsim.omniverse.nvidia.com/4.5.0/robot_setup/rig_closed_loop_structures.html) 
+
+<br>
+
+Current state
+
+```mermaid
+flowchart LR
+C[inner_knuckle_joint]
+    C --> D[knuckle_joint]
+    D --> E[finger_tip_joint]
+    E --> F[Revolutejoint]
+    F --> C
 ```
-```bash
-source /opt/ros/humble/setup.bash
-ros2 run demo_nodes_py listener
-```
-_second terminal_
+To achieve a tree structure, we will disconnect the ```inner knuckle joint```
 
-**Once you’ve finished all the tests**
+<br>
 
-- So, if we go to the / path inside the Docker container and run ```ls```, you’ll see a folder called ```root```, If you go into that folder, that will be your ~ (home) directory
+- Disconnect the mimic joint for ```robotiq_85_left/right_inner_knuckle_joint``` and check ```Exclude from Articulation``` and set the revolute joint for that joint with ```no limited```
 
-optional
+![picture04](04.png)
 
-```bash
-apt update
-apt install -y nano
-```
+<br>
 
-then,
+and I plan to solve this by using a gear joint ```create - physics - joint - gear joint``` Then place the gear joint under the prim directly below the World
 
-```bash
-echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-source ~/.bashrc
-```
+![picture30](40.png)
+You’ll see an error like the one shown. This happens because the joints form a loop. Isaac Sim expects the joint configuration to follow a tree structure, not a closed loop
 
-finally,
+<br>
 
+(gear joint)
+
+- Now set body0 and body1 to ```/World/fairino5_with_robotiq/robotiq_85_left_knuckle_link``` and ```/World/fairino5_with_robotiq/robotiq_85_right_knuckle_link```, and set hinge0 and hinge1 to ```/World/fairino5_with_robotiq/joints/robotiq_85_left_knuckle_joint``` and ```/World/fairino5_with_robotiq/joints/robotiq_85_right_knuckle_joint```
+
+- check ```Exclude from Articulation```
+
+![picture31](41.png)
+
+<br>
+<hr>
+
+## Step 9: Test
+
+- We’re almost done, so let’s test it
+
+**first terminal**
 ```bash
 cd /isaac-sim
 ./runapp.sh
 ```
 
-- Then, Isaac Sim should start up.
-Go to Window → Extensions and search for ROS2.
-You’ll see the ROS2 Bridge. If it shows up as blue like in the picture, that means it’s enabled
-- Once this is done, the basic setup is complete, and you can continue development inside Docker!
+**second terminal**
+```bash
+cd /workspace/robot_ws
+colcon build
+source install/setup.bash
+ros2 launch robot_ws demo.launch.py
+```
 
-![last picture](9.png)
+<br>
+
+![picture32](42.png)
+
+- It ran without any issues. Next, I’ll test picking up an object
+
+![picture33](43.png)
+
+> **Notice**: If it doesn’t grip well, go into robotiq_85_left_knuckle_joint’s drive, change it to force, and try again
+
+<br>
+
+**The remaining issues, like arm shaking or gripper wobbling, can be solved by adjusting the damping and stiffness—then it’s done!**
+
+<br>
+<hr>
