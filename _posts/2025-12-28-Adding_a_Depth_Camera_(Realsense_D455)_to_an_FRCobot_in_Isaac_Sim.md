@@ -1,5 +1,5 @@
 ---
-title: Adding a Depth Camera (Realsense D455) to an FRCobot in Isaac Sim
+title: Adding a Depth Camera (Realsense D455) to an FRCobot in Isaac Sim 4.5
 date: 2025-12-28 16:00:00 +0900
 categories: [Robotics, Isaac sim]
 tags: [docker, ubuntu, isaac-sim, ros2, simulation]
