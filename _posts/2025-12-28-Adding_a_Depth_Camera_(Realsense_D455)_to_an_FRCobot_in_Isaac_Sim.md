@@ -104,11 +104,9 @@ As shown in the image below, you can confirm that the TF is being published at t
 
 Edit → Preferences
 
-In the Preferences window, uncheck
-```Keep prim world transformation when reparenting```
+In the Preferences window, uncheck ```Keep prim world transformation when reparenting```
 
-Then, place the RealSense at:
-```/World/fairino5_with_robotiq/wrist3_link/tool0/Realsense```
+Then, place the RealSense at: ```/World/fairino5_with_robotiq/wrist3_link/tool0/Realsense```
 
 ![picture4](4.png)
 
@@ -142,4 +140,74 @@ Body 1: ```/World/Realsense/RSD455```
 
 - Make sure both paths are set correctly
 
-**Finally, press Play and move the robot using MoveIt—you’ll be able to confirm that the camera is properly attached and moving together with the robot**
+**Then, press Play and move the robot using MoveIt—you’ll be able to confirm that the camera is properly attached and moving together with the robot**
+
+<br>
+<hr>
+
+## Step 3: Publish camera depth and RGB topics
+
+- As the final step, we will publish it via an Action Graph
+
+<br>
+
+- From the top tab ```tools - robotics - ros2 omingraphs - camera```
+
+![picture8](8.png)
+
+<br>
+
+Here, you first need to set the camera prim path
+Set it to ```/World/Realsense/RSD455/Camera_Pseudo_Depth```
+Then, for now, set the frame ID to ```D455_link```
+
+![picture9](9.png)
+
+<br>
+
+press Enter
+
+![picture10](10.png)
+
+- In this way, the ROS camera ```Action_Graph``` will appear
+
+<br>
+
+! Now, let’s test it
+
+- First, click Play in Isaac Sim, then open another terminal
+
+```bash
+sudo docker exec -it isaac-sim bash
+
+rviz2
+```
+
+![picture11](11.png)
+
+<br>
+
+- From here, click ```Add``` in the bottom-left corner
+
+![picture12](12.png)
+
+<br>
+
+- Add the RGB image
+
+![picture13](13.png)
+
+You can see that it’s working well in the bottom-left corner
+
+<br>
+
+- The depth image will likely appear black.
+It is not well visualized in ```RViz2```, but depth measurement is working correctly
+- You can check the depth image using ```ros2 topic echo /depth```
+
+![picture14](14.png)
+
+**It works well!**
+
+<br>
+<hr>
