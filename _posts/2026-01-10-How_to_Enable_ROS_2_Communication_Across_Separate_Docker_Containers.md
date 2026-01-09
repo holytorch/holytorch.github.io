@@ -14,6 +14,17 @@ mermaid: true
 <hr>
 <br>
 
+## Prerequisites
+
+**Host OS**
+- Linux Ubuntu amd64
+
+**Docker**
+- Docker Engine
+
+<br>
+<hr>
+
 ## Introdution
 
 - In real-world robotics projects, it is common to run different components in separate Docker containers.
