@@ -16,10 +16,10 @@ timezone: Asia/Seoul
 
 title: holytorch # the main title
 
-tagline: Robotics engineering # it will display as the subtitle
+tagline: Signal Processing Engineering and Robotics Engineering of Korea University # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
-  Technical insights and development guides for AI-driven robotics
+  Technical insights and development guides for AI-driven robotics and Signal Processing
 
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
