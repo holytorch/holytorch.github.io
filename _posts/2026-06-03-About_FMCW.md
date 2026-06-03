@@ -163,9 +163,15 @@ With a moving target the delay itself depends on time:
 
 $$t_d = \frac{2R(t_i)}{c} = \frac{2(R_0 + V t_i)}{c} = t_0 + \frac{2V}{c}t_i,\qquad t_0 \equiv \frac{2R_0}{c}$$
 
-Expanding with $\phi_T(t) = w_c t + \pi B f_r t^2$:
+Expanding with $\phi_T(t) = w_c t + \pi B f_r t^2$ — keep the squared terms first (as in the notes), then collapse:
 
-$$\phi_I(t_i) = -w_c t_d - 2\pi B f_r\, t_i t_d + \pi B f_r t_d^2$$
+$$
+\begin{aligned}
+\phi_I(t_i) &= \phi_T(t_i - t_d) - \phi_T(t_i) \\
+&= w_c(t_i - t_d) - w_c t_i + \pi B f_r (t_i - t_d)^2 - \pi B f_r t_i^2 \\
+&= -w_c t_d - 2\pi B f_r\, t_i t_d + \pi B f_r t_d^2
+\end{aligned}
+$$
 
 Substitute $t_d$ and **drop the $t_i^2$ terms** (negligible since $V \ll c$), using $w_c = 2\pi f_c$:
 
@@ -227,6 +233,7 @@ $t_d = t_0 + \frac{2V}{c}nT_r + \frac{2V}{c}t_i$. Writing every term out:
 $$
 \begin{aligned}
 \phi_{I,n}(t_i) &= \phi_T(t_i - t_d) - \phi_T(t_i) \\
+&= w_c(t_i - t_d) - w_c t_i + \pi B f_r (t_i - t_d)^2 - \pi B f_r t_i^2 \\
 &= -w_c t_0 - w_c\tfrac{2V}{c}nT_r - w_c\tfrac{2V}{c}t_i
    - 2\pi B f_r\!\left[t_0 + \tfrac{2V}{c}nT_r + \tfrac{2V}{c}t_i\right]t_i
    + \pi B f_r\!\left[t_0 + \tfrac{2V}{c}nT_r + \tfrac{2V}{c}t_i\right]^2
@@ -258,13 +265,13 @@ In hardware the beat signal is sampled and **Fourier-transformed**. Recall the p
 
 $$f_{I,n} = \frac{2V}{c}f_c + B f_r t_0 + \frac{2VBn}{c}$$
 
-Take the **first FFT** over the fast time $t_i \in \left[-\tfrac{T}{2},\, \tfrac{T}{2}\right]$ (one chirp):
+Take the **first FFT** over the fast time $t_i \in \left[-\tfrac{T_r}{2},\, \tfrac{T_r}{2}\right]$ (one chirp):
 
-$$V_{I,n}(f) = \int_{-T/2}^{T/2} A\cos\big[\phi_{I,n}(t_i)\big]\, e^{-2\pi i f t_i}\, dt_i$$
+$$V_{I,n}(f) = \int_{-T_r/2}^{T_r/2} A\cos\big[\phi_{I,n}(t_i)\big]\, e^{-2\pi i f t_i}\, dt_i$$
 
 Writing the cosine as two exponentials and integrating turns each into a **sinc**:
 
-$$V_{I,n}(f) = \frac{AT}{2}\left\{ \frac{\sin\!\big[2\pi(f - f_{I,n})\tfrac{T}{2}\big]}{2\pi(f - f_{I,n})\tfrac{T}{2}}\, e^{-i\phi_0 + i2\pi f_c\frac{2V}{c}nT_r} \;+\; \frac{\sin\!\big[2\pi(f + f_{I,n})\tfrac{T}{2}\big]}{2\pi(f + f_{I,n})\tfrac{T}{2}}\, e^{+i\phi_0 - i2\pi f_c\frac{2V}{c}nT_r} \right\}$$
+$$V_{I,n}(f) = \frac{AT_r}{2}\left\{ \frac{\sin\!\big[2\pi(f - f_{I,n})\tfrac{T_r}{2}\big]}{2\pi(f - f_{I,n})\tfrac{T_r}{2}}\, e^{-i\phi_0 + i2\pi f_c\frac{2V}{c}nT_r} \;+\; \frac{\sin\!\big[2\pi(f + f_{I,n})\tfrac{T_r}{2}\big]}{2\pi(f + f_{I,n})\tfrac{T_r}{2}}\, e^{+i\phi_0 - i2\pi f_c\frac{2V}{c}nT_r} \right\}$$
 
 ![First FFT of the beat signal: a sinc peaked at the beat frequency](range_fft.png)
 _First FFT (range FFT): one chirp's beat signal transforms into a sinc, peaked at the beat frequency — the peak location gives range._
